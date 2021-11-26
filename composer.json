@@ -1,0 +1,22 @@
+{
+    "name": "pudongping/php-grpc-demo",
+    "description": "使用 php 搭建的 grpc 测试项目",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "pudongping",
+            "email": "276558492@qq.com"
+        }
+    ],
+    "require": {
+        "grpc/grpc": "^1.42",
+        "google/protobuf": "^3.19"
+    },
+    "autoload": {
+        "psr-4": {
+            "GPBMetadata\\": "grpc/GPBMetadata",
+            "Grpc\\": "grpc/Grpc"
+        }
+    }
+}

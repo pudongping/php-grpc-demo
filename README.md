@@ -80,3 +80,38 @@ php -m | grep protobuf
 # 因此我这里需要执行如下命令即可，需要注意我这里使用的是 m1 ，intel 芯片的 Mac homebrew 安装 php 的路径和 m1 芯片的路径不一致，需要按照你自己的实际路径去建立软连接
 ln -s /opt/homebrew/Cellar/pcre2/10.39/include/pcre2.h /opt/homebrew/Cellar/php@7.4/7.4.25/include/php/ext/pcre/pcre2.h
 ```
+
+## 生成 php-plugins 插件
+
+```bash
+
+git clone -b v1.27.x https://github.com/grpc/grpc.git
+# 如果速度慢的话，可以考虑 gitee 提供的镜像
+git clone -b 1.27.x https://gitee.com/mirrors/grpc.git
+
+# 安装 grpc 在 github 上的其他依赖
+git submodule update --init
+
+# 编译生成 grpc php 插件，生成 proto 文件时需要用到
+# 执行成功之后会提示
+# 比如我的生成之后提示了：[HOSTLD]  Linking /Users/pudongping/php-project/grpc/bins/opt/grpc_php_plugin
+make grpc_php_plugin
+
+# 生成的 grpc_php_plugin 插件在 `bins/opt/` 目录下
+# 并且还会自动生成 protoc 文件，在 `/bins/opt/protobuf` 目录下
+```
+
+执行 `make grpc_php_plugin` 时， 如果提示错误如下：
+
+```bash
+[AUTOGEN] Preparing protobuf
+Can't exec "aclocal": No such file or directory at /opt/homebrew/Cellar/autoconf/2.71/share/autoconf/Autom4te/FileUtils.pm line 274.
+autoreconf: error: aclocal failed with exit status: 2
+make: *** [third_party/protobuf/configure] Error 2
+```
+
+那么需要安装
+
+```bash
+brew install automake
+```

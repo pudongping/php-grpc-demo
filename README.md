@@ -1,7 +1,10 @@
-# PHP7.4 搭建 GRPC 服务
+# PHP7.4 搭建 GRPC 客户端服务
 
-> 本地系统：MacBook M1 arm64
-> 为了下载软件方便，统一采用 Homebrew 安装软件
+> 本地系统：MacBook M1 arm64  
+> 为了下载软件方便，统一采用 Homebrew 安装软件  
+> **php 目前只能搭建 gRPC 客户端**，详见 [gRPC官方文档](https://grpc.io/docs/languages/php/quickstart/)，  
+> 不过你要是想使用 php 搭建 grpc 客户端和服务端，你可以使用 php 基于 swoole 的 [hyperf框架](https://hyperf.io/)  
+> 如果你想使用 hyperf 搭建 grpc 客户端和服务端，你可以参考我的另一个 demo 项目 [hyperf-grpc-demo](https://github.com/pudongping/hyperf-grpc-demo)  
 
 ## M1 下安装 php7.4 开发环境
 
@@ -87,18 +90,19 @@ ln -s /opt/homebrew/Cellar/pcre2/10.39/include/pcre2.h /opt/homebrew/Cellar/php@
 
 git clone -b v1.27.x https://github.com/grpc/grpc.git
 # 如果速度慢的话，可以考虑 gitee 提供的镜像
-git clone -b 1.27.x https://gitee.com/mirrors/grpc.git
+git clone -b v1.27.x https://gitee.com/mirrors/grpc.git
 
 # 安装 grpc 在 github 上的其他依赖
 git submodule update --init
 
 # 编译生成 grpc php 插件，生成 proto 文件时需要用到
 # 执行成功之后会提示
-# 比如我的生成之后提示了：[HOSTLD]  Linking /Users/pudongping/php-project/grpc/bins/opt/grpc_php_plugin
+# 比如我的生成之后提示了：[HOSTLD]  Linking /Users/pudongping/php-tools/grpc/bins/opt/grpc_php_plugin
+# 这里我们只编译了 php 的插件，如果你需要编译所有的插件，你需要执行 `make && make install`
 make grpc_php_plugin
 
 # 生成的 grpc_php_plugin 插件在 `bins/opt/` 目录下
-# 并且还会自动生成 protoc 文件，在 `/bins/opt/protobuf` 目录下
+# 并且还会自动生成 protoc 文件，在 `bins/opt/protobuf` 目录下
 ```
 
 执行 `make grpc_php_plugin` 时， 如果提示错误如下：
@@ -114,4 +118,50 @@ make: *** [third_party/protobuf/configure] Error 2
 
 ```bash
 brew install automake
+```
+
+## 初始化项目
+
+- 项目初始化
+
+```bash
+# 先使用 composer 初始化项目
+composer init
+```
+
+- 安装 grpc composer 扩展包
+
+```bash
+composer require grpc/grpc
+composer require google/protobuf
+```
+
+- 使用 proto 文件生成 php 代码
+
+> 以下命令在项目根目录下执行
+
+```bash
+# 当然你也可以将 protoc 二进制文件和 grpc_php_plugin 二进制文件移动到 `/usr/local/bin` 目录下，这样就不需要像我这样写绝对路径了
+
+# 不会有 client stub 类
+/Users/pudongping/php-tools/grpc/bins/opt/protobuf/protoc --php_out=plugins=grpc:./grpc ./proto/meet.proto
+
+# 会有 client stub 类，我这里需要生成 client stub 类
+/Users/pudongping/php-tools/grpc/bins/opt/protobuf/protoc --php_out=./grpc --grpc_out=./grpc --plugin=protoc-gen-grpc=/Users/pudongping/php-tools/grpc/bins/opt/grpc_php_plugin ./proto/meet.proto
+```
+
+## 测试
+
+如果你想运行我的这个 demo ，你需要先下载 composer 依赖
+
+```bash
+# 在项目根目录下执行
+composer install
+```
+
+然后启动
+
+```bash
+php index.php
+# string(14) " 你好，Alex"
 ```

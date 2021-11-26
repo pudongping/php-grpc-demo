@@ -162,7 +162,11 @@ composer require google/protobuf
 composer install
 ```
 
-然后启动
+你需要先启动服务端  
+
+> [服务端代码](https://github.com/pudongping/go-micro-demo)
+
+然后再启动 php 客户端
 
 ```bash
 php index.php

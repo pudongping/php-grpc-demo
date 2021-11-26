@@ -86,6 +86,9 @@ ln -s /opt/homebrew/Cellar/pcre2/10.39/include/pcre2.h /opt/homebrew/Cellar/php@
 
 ## 生成 php-plugins 插件
 
+> 这里因为 grpc/grpc 这个包非常大，有可能下载会不成功，因此我已经将编译好的 `grpc_php_plugin` 二进制文件以及 `protoc` 二进制文件上传到了 `tools` 目录下  
+> 方便各位同学可以直接使用
+
 ```bash
 
 git clone -b v1.27.x https://github.com/grpc/grpc.git
